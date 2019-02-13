@@ -14,18 +14,17 @@ var token = "";
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
 
 var BDD = [
-    {username: 'Benjamin', password: "miaou", events: [
+    {
+        username: 'Benjamin', password: "miaou", events: [
             {eventName: "event1", eventDesc: "test1"},
             {eventName: "event2", eventDesc: "test2"}
-        ]},
-    {username: 'Florian', password: "dab", events: [
+        ]
+    },
+    {
+        username: 'Glandu', password: "password", events: [
             {eventName: "event1", eventDesc: "test1"}
-        ]},
-    {username: 'Yannick', password: "belette", events: [
-            {eventName: "event1", eventDesc: "test1"},
-            {eventName: "event2", eventDesc: "test2"},
-            {eventName: "event3", eventDesc: "test3"}
-        ]}
+        ]
+    }
 ];
 
 app.use(function(req, res, next) {
@@ -63,35 +62,31 @@ _______________________________________________________________________
 _____________________________________________________________________*/
 
 app.get('/', function (req, res) {
-    res.send('Accueil');
+    res.send(BDD);
 });
 
-app.get('/sign-in', function (req, res) {
+/*app.get('/sign-in', function (req, res) {
     res.sendFile(path.join(__dirname+'/views/sign-in.html'));
     if(req.session.flash !== undefined) {
         var flashMsg = req.session.flash;
         req.session.flash = undefined;
         res.send(flashMsg);
     }
-});
+});*/
 
 app.post('/sign-in', function (req, res) {
-    if(req.body.name && req.body.mdp) {
-        req.session.flash = "Votre compte a bien été créé !";
-    } else {
-        req.session.flash = "Il manque une information !";
-    }
-    res.redirect('/sign-in');
+    BDD.push({username: req.body.name, password: req.body.mdp, events: []});
+    res.send(BDD)
 });
 
-app.get('/login', function (req, res) {
+/*app.get('/login', function (req, res) {
     res.sendFile(path.join(__dirname+'/views/sign-in.html'));
     if(req.session.flash !== undefined) {
         var flashMsg = req.session.flash;
         req.session.flash = undefined;
         res.send(flashMsg);
     }
-});
+});*/
 
 app.post('/login', function (req, res) {
     if(req.body.name && req.body.mdp) {
@@ -107,27 +102,25 @@ app.post('/login', function (req, res) {
         });
 
         if(user) {
-            req.session.flash = "Vous êtes authentifié !";
             token = jwt.sign({ login: user }, mySecret);
-            res.redirect('/login');
+            res.send(token);
         } else {
-            res.status('401').json({error: 'Nom ou mdp incorrect.'});
-            return;
+            res.send("Erreur : Nom ou mdp incorrect.")
         }
     } else {
-        req.session.flash = "Informations manquantes !";
-        res.redirect('/login');
+        res.send("Erreur : Informations manquantes !");
     }
 });
 
 app.get('/events', passport.authenticate('jwt', {session: false}), function (req, res) {
+    var events;
     for(var i=0; i<=BDD.length; i++) {
         if(BDD[i].username === req.user.username && BDD[i].password === req.user.password) {
-            res.send(BDD[i].events);
+            events = BDD[i].events;
             break;
         }
     };
-    res.send('Hello');
+    res.send(events);
 });
 
 /*app.get('/events/:username/:eventId', function (req, res) {
