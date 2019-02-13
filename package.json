@@ -1,0 +1,26 @@
+{
+  "name": "vaess-calendar-node",
+  "version": "1.0.0",
+  "description": "Projet Node.js/Vue.js licence pro",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Veisseyre/vaess-calendar-node.git"
+  },
+  "author": "Benjamin Veisseyre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Veisseyre/vaess-calendar-node/issues"
+  },
+  "homepage": "https://github.com/Veisseyre/vaess-calendar-node#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "jsonwebtoken": "^8.4.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0"
+  }
+}
