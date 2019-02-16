@@ -4,7 +4,7 @@ function generateId() {
     var userIds = DB.map(x => {
         return x.userId;
     });
-    return Math.max(...userIds);
+    return Math.max(...userIds) + 1;
 }
 
 function createUser(username, password) {

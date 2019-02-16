@@ -1,14 +1,19 @@
 const DB = require('./database').DB;
 
 function generateId() {
+    let maxId = 1;
     var events = DB.map(x => {
         return x.events;
     });
-    var eventIds = events.map(x => {
-        return x.eventId;
+    var maxEventIds = events.map(x => {
+        for (var value in x) {
+            if(x[value].eventId > maxId) {
+                maxId = x[value].eventId;
+            }
+        }
+        return maxId;
     });
-
-    return eventIds;
+    return Math.max(...maxEventIds) + 1;
 }
 
 console.log(generateId());
