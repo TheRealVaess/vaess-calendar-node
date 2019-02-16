@@ -7,25 +7,12 @@ const path = require('path');
 const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 5000;
+const DB = require('./database').DB;
 
 const mySecret = 'dabmiaoubelettelolo17';
 var token = "";
 
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
-
-var BDD = [
-    {
-        username: 'Benjamin', password: "miaou", events: [
-            {eventName: "event1", eventDesc: "test1"},
-            {eventName: "event2", eventDesc: "test2"}
-        ]
-    },
-    {
-        username: 'Glandu', password: "password", events: [
-            {eventName: "event1", eventDesc: "test1"}
-        ]
-    }
-];
 
 app.use(function(req, res, next) {
     if(token) {
@@ -62,38 +49,20 @@ _______________________________________________________________________
 _____________________________________________________________________*/
 
 app.get('/', function (req, res) {
-    res.send(BDD);
+    res.send(DB);
 });
-
-/*app.get('/sign-in', function (req, res) {
-    res.sendFile(path.join(__dirname+'/views/sign-in.html'));
-    if(req.session.flash !== undefined) {
-        var flashMsg = req.session.flash;
-        req.session.flash = undefined;
-        res.send(flashMsg);
-    }
-});*/
 
 app.post('/sign-in', function (req, res) {
-    BDD.push({username: req.body.name, password: req.body.mdp, events: []});
-    res.send(BDD)
+    DB.push({username: req.body.name, password: req.body.mdp, events: []});
+    res.send(DB)
 });
-
-/*app.get('/login', function (req, res) {
-    res.sendFile(path.join(__dirname+'/views/sign-in.html'));
-    if(req.session.flash !== undefined) {
-        var flashMsg = req.session.flash;
-        req.session.flash = undefined;
-        res.send(flashMsg);
-    }
-});*/
 
 app.post('/login', function (req, res) {
     if(req.body.name && req.body.mdp) {
         var name = req.body.name;
         var mdp = req.body.mdp;
 
-        var user = BDD.find(user => {
+        var user = DB.find(user => {
             if(user.username === name && user.password === mdp) {
                 return true;
             } else {
@@ -114,24 +83,24 @@ app.post('/login', function (req, res) {
 
 app.get('/events', passport.authenticate('jwt', {session: false}), function (req, res) {
     var events;
-    for(var i=0; i<=BDD.length; i++) {
-        if(BDD[i].username === req.user.username && BDD[i].password === req.user.password) {
-            events = BDD[i].events;
+    for(var i=0; i<=DB.length; i++) {
+        if(DB[i].username === req.user.username && DB[i].password === req.user.password) {
+            events = DB[i].events;
             break;
         }
     };
     res.send(events);
 });
 
-/*app.get('/events/:username/:eventId', function (req, res) {
+/*app.get('/events/:eventId', function (req, res) {
     res.send('Hello World!');
 });
 
-app.get('/events/:username/add/:eventId', function (req, res) {
+app.post('/events/add/:eventId', function (req, res) {
     res.send('Hello World!');
 });
 
-app.get('/events/:username/delete/:eventId', function (req, res) {
+app.post('/events/delete/:eventId', function (req, res) {
     res.send('Hello World!');
 });*/
 
