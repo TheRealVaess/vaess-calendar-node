@@ -1,4 +1,4 @@
-var BDD = [
+const BDD = [
     {
         userId: 1, username: 'Benjamin', password: "miaou", events: [
             {eventId: 1, eventName: "event1", eventDesc: "test1", eventDate: "27/06/2019"},
