@@ -21,13 +21,13 @@ function generateId() {
     return maxId;
 }
 
-function createEvent(name, desc, date) {
-    DB.event.push({eventId: generateId(), eventName: name, eventDesc: desc, eventDate: date});
+function createEvent(userId, name, desc, date) {
+    const events = getDBEventsByUser(userId);
+    return events.push({eventId: generateId(), eventName: name, eventDesc: desc, eventDate: date});
 }
 
 function deleteEvent(userId, eventId) {
     const events = getDBEventsByUser(userId);
-
     return delete events[eventId];
 }
 
