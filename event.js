@@ -31,19 +31,9 @@ function deleteEvent(userId, eventId) {
     return delete events[eventId];
 }
 
-function modifyEvent(id, newName, newDesc, newDate) {
-    const events = getDBEvents();
-    const theEvent = events.find(event => {
-        return event.eventId === +id;
-    });
-
-    if(theEvent) {
-        theEvent.eventName = newName;
-        theEvent.eventDesc = newDesc;
-        theEvent.eventDate = newDate;
-    } else {
-        return false;
-    }
+function modifyEvent(userId, eventId, newName, newDesc, newDate) {
+    const events = getDBEventsByUser(userId);
+    return (events[eventId].eventName = newName) && (events[eventId].eventDesc = newDesc) && (events[eventId].eventDate = newDate);
 }
 
 module.exports = {
