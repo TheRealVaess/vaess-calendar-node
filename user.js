@@ -12,44 +12,35 @@ function createUser(name, pswd) {
 }
 
 function deleteUser(id) {
-    const theUser = DB.find(user => {
-        if(user.eventId == id) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+    const theUser = DB.find(user => user.eventId === +id);
 
     if(theUser) {
         delete theUser;
+        return true;
+    } else {
+        return false;
     }
 }
 
 function modifyUserName(id, newUsername) {
-    const theUser = DB.find(user => {
-        if(user.eventId == id) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+    const theUser = DB.find(user => user.eventId === +id);
 
     if(theUser) {
         theUser.username = newUsername;
+        return true;
+    } else {
+        return false;
     }
 }
 
 function modifyUserPassword(id, newPassword) {
-    const theUser = DB.find(user => {
-        if(user.eventId == id) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+    const theUser = DB.find(user => user.eventId === +id);
 
     if(theUser) {
         theUser.password = newPassword;
+        return true;
+    } else {
+        return false;
     }
 }
 

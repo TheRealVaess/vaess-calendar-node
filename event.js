@@ -6,6 +6,14 @@ function getDBEvents() {
     }, []);
 }
 
+function getDBEventsByUser(userId) {
+    const user = DB.find(user => {
+        return user.userId === +userId;
+    });
+
+    return user.events;
+}
+
 function generateId() {
     const events = getDBEvents();
 
@@ -17,37 +25,24 @@ function createEvent(name, desc, date) {
     DB.event.push({eventId: generateId(), eventName: name, eventDesc: desc, eventDate: date});
 }
 
-function deleteEvent(id) {
-    const events = getDBEvents();
-    const theEvent = events.find(event => {
-        if(event.eventId == id) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+function deleteEvent(userId, eventId) {
+    const events = getDBEventsByUser(userId);
 
-    if(theEvent) {
-        delete theEvent;
-    } else {
-        return false;
-    }
+    return delete events[eventId];
 }
 
 function modifyEvent(id, newName, newDesc, newDate) {
     const events = getDBEvents();
     const theEvent = events.find(event => {
-        if(event.eventId == id) {
-            return true;
-        } else {
-            return false;
-        }
+        return event.eventId === +id;
     });
 
     if(theEvent) {
         theEvent.eventName = newName;
         theEvent.eventDesc = newDesc;
         theEvent.eventDate = newDate;
+    } else {
+        return false;
     }
 }
 

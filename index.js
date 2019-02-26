@@ -8,6 +8,8 @@ const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 5000;
 const DB = require('./database').DB;
+const userUtil = require('./user.js');
+const eventUtil = require('./event.js');
 
 const mySecret = 'dabmiaoubelettelolo17';
 var token = "";
@@ -53,14 +55,33 @@ app.get('/', function (req, res) {
 });
 
 app.post('/sign-in', function (req, res) {
-    DB.push({username: req.body.name, password: req.body.mdp, events: []});
-    res.send(DB)
+    if(req.body.name && req.body.password) {
+        var name = req.body.name;
+        var mdp = req.body.password;
+
+        var user = DB.find(user => {
+            if(user.username === name && user.password === mdp) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        if(user) {
+            res.send("Erreur : L'utilisateur existe déjà.")
+        } else {
+            let userAdded = userUtil.createUser(name, mdp);
+            res.send(userAdded);
+        }
+    } else {
+        res.send("Erreur : Informations manquantes !");
+    }
 });
 
 app.post('/login', function (req, res) {
-    if(req.body.name && req.body.mdp) {
+    if(req.body.name && req.body.password) {
         var name = req.body.name;
-        var mdp = req.body.mdp;
+        var mdp = req.body.password;
 
         var user = DB.find(user => {
             if(user.username === name && user.password === mdp) {
@@ -94,15 +115,19 @@ app.get('/events', passport.authenticate('jwt', {session: false}), function (req
 
 /*app.get('/events/:eventId', function (req, res) {
     res.send('Hello World!');
-});
+});*/
 
-app.post('/events/add/:eventId', function (req, res) {
-    res.send('Hello World!');
-});
-
-app.post('/events/delete/:eventId', function (req, res) {
+/*app.post('/events/add/:eventId', function (req, res) {
     res.send('Hello World!');
 });*/
+
+app.post('/events/delete/:eventId', function (req, res) {
+    if(eventUtil.deleteEvent(req.params.eventId)) {
+        res.send('Evènement supprimé !');
+    } else {
+        res.send('Evènement non-existant.');
+    }
+});
 
 app.listen(PORT, function () {
     console.log('Example app listening on port ' + PORT);
