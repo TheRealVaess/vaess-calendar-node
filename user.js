@@ -8,22 +8,16 @@ function generateId() {
 }
 
 function createUser(name, pswd) {
-    DB.push({ userId: generateId(), username: name, password: pswd, events: []});
+    return DB.push({ userId: generateId(), username: name, password: pswd, events: []});
 }
 
 function deleteUser(id) {
-    const theUser = DB.find(user => user.eventId === +id);
-
-    if(theUser) {
-        delete theUser;
-        return true;
-    } else {
-        return false;
-    }
+    const theUserId = DB.findIndex(user => user.userId === +id);
+    return delete DB[theUserId];
 }
 
 function modifyUserName(id, newUsername) {
-    const theUser = DB.find(user => user.eventId === +id);
+    const theUser = DB.find(user => user.userId === +id);
 
     if(theUser) {
         theUser.username = newUsername;
