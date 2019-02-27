@@ -56,16 +56,10 @@ app.get('/', function (req, res) {
 
 app.post('/sign-in', function (req, res) {
     if(req.body.name && req.body.password) {
-        var name = req.body.name;
-        var mdp = req.body.password;
+        let name = req.body.name;
+        let mdp = req.body.password;
 
-        var user = DB.find(user => {
-            if(user.username === name && user.password === mdp) {
-                return true;
-            } else {
-                return false;
-            }
-        });
+        let user = DB.find(user => (user.username === name) && (user.password === mdp));
 
         if(user) {
             res.send("Erreur : L'utilisateur existe déjà.")
@@ -80,16 +74,10 @@ app.post('/sign-in', function (req, res) {
 
 app.post('/login', function (req, res) {
     if(req.body.name && req.body.password) {
-        var name = req.body.name;
-        var mdp = req.body.password;
+        let name = req.body.name;
+        let mdp = req.body.password;
 
-        var user = DB.find(user => {
-            if(user.username === name && user.password === mdp) {
-                return true;
-            } else {
-                return false;
-            }
-        });
+        let user = DB.find(user => (user.username === name) && (user.password === mdp));
 
         if(user) {
             token = jwt.sign({ login: user }, mySecret);
@@ -103,23 +91,28 @@ app.post('/login', function (req, res) {
 });
 
 app.get('/events', passport.authenticate('jwt', {session: false}), function (req, res) {
-    var events;
-    for(var i=0; i<=DB.length; i++) {
-        if(DB[i].username === req.user.username && DB[i].password === req.user.password) {
-            events = DB[i].events;
-            break;
-        }
-    };
-    res.send(events);
+    res.send(eventUtil.getDBEventsByUser(req.user.userId));
 });
 
-/*app.get('/events/:eventId', function (req, res) {
-    res.send('Hello World!');
-});*/
+app.get('/events/:eventId', passport.authenticate('jwt', {session: false}), function (req, res) {
+    res.send(eventUtil.getDBEventDetailsByUser(req.params.eventId, req.user.userId));
+});
 
-/*app.post('/events/add/:eventId', function (req, res) {
-    res.send('Hello World!');
-});*/
+app.post('/events/add', passport.authenticate('jwt', {session: false}), function (req, res) {
+    if(req.body.newName && req.body.newDesc && req.body.newDate) {
+        let newName = req.body.newName;
+        let newDesc = req.body.newDesc;
+        let newDate = req.body.newDate;
+
+        if(eventUtil.createEvent(req.user.userId, newName, newDesc, newDate)) {
+            res.send("Evenement créé !");
+        } else {
+            res.send("Erreur lors de la création.");
+        }
+    } else {
+        res.send("Informations manquantes !");
+    }
+});
 
 app.post('/events/delete/:eventId', function (req, res) {
     if(eventUtil.deleteEvent(req.params.eventId)) {

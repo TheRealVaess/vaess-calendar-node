@@ -21,9 +21,13 @@ function modifyUserName(id, newUsername) {
     return (theUser.username = newUsername);
 }
 
-function modifyUserPassword(id, newPassword) {
+function modifyUserPassword(id, oldPassword, newPassword) {
     const theUser = DB.find(user => user.userId === +id);
-    return (theUser.password = newPassword);
+    if(oldPassword === theUser.password) {
+        return (theUser.password = newPassword);
+    } else {
+        return false;
+    }
 }
 
 module.exports = {

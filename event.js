@@ -10,8 +10,14 @@ function getDBEventsByUser(userId) {
     const user = DB.find(user => {
         return user.userId === +userId;
     });
-
     return user.events;
+}
+
+function getDBEventDetailsByUser(evId, userId) {
+    const userEvents = getDBEventsByUser(userId);
+    return userEvents.find(event => {
+        return event.eventId === +evId;
+    });
 }
 
 function generateId() {
@@ -39,5 +45,7 @@ function modifyEvent(userId, eventId, newName, newDesc, newDate) {
 module.exports = {
     createEvent: createEvent,
     deleteEvent: deleteEvent,
-    modifyEvent: modifyEvent
+    modifyEvent: modifyEvent,
+    getDBEventsByUser: getDBEventsByUser,
+    getDBEventDetailsByUser: getDBEventDetailsByUser
 }
