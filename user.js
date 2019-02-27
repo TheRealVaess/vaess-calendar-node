@@ -18,24 +18,12 @@ function deleteUser(id) {
 
 function modifyUserName(id, newUsername) {
     const theUser = DB.find(user => user.userId === +id);
-
-    if(theUser) {
-        theUser.username = newUsername;
-        return true;
-    } else {
-        return false;
-    }
+    return (theUser.username = newUsername);
 }
 
 function modifyUserPassword(id, newPassword) {
-    const theUser = DB.find(user => user.eventId === +id);
-
-    if(theUser) {
-        theUser.password = newPassword;
-        return true;
-    } else {
-        return false;
-    }
+    const theUser = DB.find(user => user.userId === +id);
+    return (theUser.password = newPassword);
 }
 
 module.exports = {
