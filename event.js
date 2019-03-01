@@ -1,5 +1,7 @@
 const DB = require('./database').DB;
 
+//TODO test pour remplacer les delete par des splice
+
 function getDBEvents() {
     return DB.reduce((res, cur) => {
         return res.concat(cur.events)
@@ -34,12 +36,14 @@ function createEvent(userId, name, desc, date) {
 
 function deleteEvent(userId, eventId) {
     const events = getDBEventsByUser(userId);
-    return delete events[eventId];
+    const theEventId = events.findIndex(event => event.eventId === +eventId);
+    return delete events[theEventId];
 }
 
 function modifyEvent(userId, eventId, newName, newDesc, newDate) {
     const events = getDBEventsByUser(userId);
-    return (events[eventId].eventName = newName) && (events[eventId].eventDesc = newDesc) && (events[eventId].eventDate = newDate);
+    const theEventId = events.findIndex(event => event.eventId === +eventId);
+    return (events[theEventId].eventName = newName) && (events[theEventId].eventDesc = newDesc) && (events[theEventId].eventDate = newDate);
 }
 
 module.exports = {

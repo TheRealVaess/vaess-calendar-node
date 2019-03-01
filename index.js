@@ -59,13 +59,14 @@ app.post('/sign-in', function (req, res) {
         let name = req.body.name;
         let mdp = req.body.password;
 
-        let user = DB.find(user => (user.username === name) && (user.password === mdp));
+        let user = DB.find(user => user.username === name);
 
         if(user) {
             res.send("Erreur : L'utilisateur existe déjà.")
         } else {
-            let userAdded = userUtil.createUser(name, mdp);
-            res.send(userAdded);
+            if(userUtil.createUser(name, mdp)) {
+                res.send("Compte créé !");
+            }
         }
     } else {
         res.send("Erreur : Informations manquantes !");
@@ -79,11 +80,51 @@ app.post('/login', function (req, res) {
 
         let user = DB.find(user => (user.username === name) && (user.password === mdp));
 
+        //TODO vérification qu'on est pas déjà login
+
         if(user) {
             token = jwt.sign({ login: user }, mySecret);
             res.send(token);
         } else {
             res.send("Erreur : Nom ou mdp incorrect.")
+        }
+    } else {
+        res.send("Erreur : Informations manquantes !");
+    }
+});
+
+//TODO disconnect
+
+app.get('/deleteAccount', passport.authenticate('jwt', {session: false}), function (req, res) {
+    if(req.user.userId) {
+        if(userUtil.deleteUser(req.user.userId)) {
+            res.send("Compte supprimé !");
+        } else {
+            res.send("Erreur lors de la suppression du compte.")
+        }
+    } else {
+        res.send("Vous n'êtes pas login.");
+    }
+});
+
+app.get('/modifyUserName', passport.authenticate('jwt', {session: false}), function (req, res) {
+    if(req.user.userId && req.body.newUserName) {
+        if(userUtil.modifyUserName(req.user.userId, req.body.newUserName)) {
+            res.send("Nom modifié !");
+        } else {
+            res.send("Erreur lors de la modification du nom.")
+        }
+    } else {
+        res.send("Erreur : Informations manquantes !");
+    }
+});
+
+app.get('/modifyPassWord', passport.authenticate('jwt', {session: false}), function (req, res) {
+    if(req.user.userId && req.body.oldPassword && req.body.newPassword) {
+        if(userUtil.modifyUserPassword(req.user.userId, req.body.oldPassword, req.body.newPassword)) {
+            res.send("Mot de passe modifié !");
+        } else {
+            res.send("Erreur lors de la modification du mot de passe.")
         }
     } else {
         res.send("Erreur : Informations manquantes !");
@@ -114,11 +155,31 @@ app.post('/events/add', passport.authenticate('jwt', {session: false}), function
     }
 });
 
-app.post('/events/delete/:eventId', function (req, res) {
-    if(eventUtil.deleteEvent(req.params.eventId)) {
-        res.send('Evènement supprimé !');
+app.post('/events/delete/:eventId', passport.authenticate('jwt', {session: false}), function (req, res) {
+    if(req.user.userId && req.params.eventId) {
+        if(eventUtil.deleteEvent(req.user.userId, req.params.eventId)) {
+            res.send('Evènement supprimé !');
+        } else {
+            res.send('Erreur lors de la suppression.');
+        }
     } else {
-        res.send('Evènement non-existant.');
+        res.send("Evènement non-existant.");
+    }
+});
+
+app.post('/events/modify/:eventId', passport.authenticate('jwt', {session: false}), function (req, res) {
+    if(req.body.newName && req.body.newDesc && req.body.newDate) {
+        let newName = req.body.newName;
+        let newDesc = req.body.newDesc;
+        let newDate = req.body.newDate;
+
+        if(eventUtil.modifyEvent(req.user.userId, req.params.eventId, newName, newDesc, newDate)) {
+            res.send("Evenement modifié !");
+        } else {
+            res.send("Erreur lors de la modification.");
+        }
+    } else {
+        res.send("Informations manquantes !");
     }
 });
 
