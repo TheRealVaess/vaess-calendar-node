@@ -80,8 +80,6 @@ app.post('/login', function (req, res) {
 
         let user = DB.find(user => (user.username === name) && (user.password === mdp));
 
-        //TODO vérification qu'on est pas déjà login
-
         if(user) {
             token = jwt.sign({ login: user }, mySecret);
             res.send(token);
@@ -92,8 +90,6 @@ app.post('/login', function (req, res) {
         res.send("Erreur : Informations manquantes !");
     }
 });
-
-//TODO disconnect
 
 app.get('/deleteAccount', passport.authenticate('jwt', {session: false}), function (req, res) {
     if(req.user.userId) {

@@ -37,7 +37,7 @@ function createEvent(userId, name, desc, date) {
 function deleteEvent(userId, eventId) {
     const events = getDBEventsByUser(userId);
     const theEventId = events.findIndex(event => event.eventId === +eventId);
-    return delete events[theEventId];
+    return events.splice(theEventId, 1);
 }
 
 function modifyEvent(userId, eventId, newName, newDesc, newDate) {

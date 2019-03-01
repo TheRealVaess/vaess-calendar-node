@@ -13,7 +13,7 @@ function createUser(name, pswd) {
 
 function deleteUser(id) {
     const theUserId = DB.findIndex(user => user.userId === +id);
-    return delete DB[theUserId];
+    return DB.splice(theUserId, 1);
 }
 
 function modifyUserName(id, newUsername) {
