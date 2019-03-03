@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 5000;
 const DB = require('./database').DB;
 const userUtil = require('./user.js');
 const eventUtil = require('./event.js');
+const cors = require('cors');
 
 const mySecret = 'dabmiaoubelettelolo17';
 var token = "";
@@ -25,6 +26,11 @@ app.use(function(req, res, next) {
     }
     next();
 });
+
+app.use(cors({ credentials: true, origin: true }));
+
+app.options("*", cors());
+
 
 /*_____________________________________________________________________
 _______________________________________________________________________
@@ -103,7 +109,7 @@ app.get('/deleteAccount', passport.authenticate('jwt', {session: false}), functi
     }
 });
 
-app.get('/modifyUserName', passport.authenticate('jwt', {session: false}), function (req, res) {
+app.post('/modifyUserName', passport.authenticate('jwt', {session: false}), function (req, res) {
     if(req.user.userId && req.body.newUserName) {
         if(userUtil.modifyUserName(req.user.userId, req.body.newUserName)) {
             res.send("Nom modifié !");
@@ -115,7 +121,7 @@ app.get('/modifyUserName', passport.authenticate('jwt', {session: false}), funct
     }
 });
 
-app.get('/modifyPassWord', passport.authenticate('jwt', {session: false}), function (req, res) {
+app.post('/modifyPassWord', passport.authenticate('jwt', {session: false}), function (req, res) {
     if(req.user.userId && req.body.oldPassword && req.body.newPassword) {
         if(userUtil.modifyUserPassword(req.user.userId, req.body.oldPassword, req.body.newPassword)) {
             res.send("Mot de passe modifié !");
