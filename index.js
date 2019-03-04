@@ -17,7 +17,7 @@ var token = "";
 
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
 
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
     if(token) {
         if(!req.headers) {
             req.headers = {};
@@ -25,7 +25,7 @@ app.use(function(req, res, next) {
         req.headers['authorization'] = 'Bearer ' + token;
     }
     next();
-});
+});*/
 
 app.use(cors({ credentials: true, origin: true }));
 
@@ -90,7 +90,8 @@ app.post('/login', function (req, res) {
             token = jwt.sign({ login: user }, mySecret);
             res.send(token);
         } else {
-            res.send("Erreur : Nom ou mdp incorrect.")
+            //res.send("Erreur : Nom ou mdp incorrect.");
+            res.send("Erreur : Nom ou mdp incorrect.");
         }
     } else {
         res.send("Erreur : Informations manquantes !");
